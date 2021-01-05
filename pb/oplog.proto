@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "github.com/amazingchow/photon-dance-consistent-hashing/api";
+package amazingchow.photon_dance_consistent_hashing;
+
+import "google/protobuf/timestamp.proto";
+
+enum OperationType
+{
+	OPERATION_TYPE_ADD = 0;
+	OPERATION_TYPE_REMOVE = 1;
+}
+
+message OpLogEntry
+{
+	OperationType operation_type = 1;
+	google.protobuf.Timestamp operation_time = 2;
+	bytes payload = 3;
+}

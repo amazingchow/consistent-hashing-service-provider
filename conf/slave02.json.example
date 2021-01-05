@@ -1,0 +1,16 @@
+{
+    "grpc_endpoint": "localhost:18083",
+    "ch": {
+        "vir_replicas": 200
+    },
+    "oplogger": {
+        "enable": true,
+        "kafka_topic": "photon-dance-consistent-hashing-oplog",
+        "kafka_brokers": ["localhost:9092"],
+        "kafka_consumer_group": "photon-dance-consistent-hashing-consumer-group-02"
+    },
+    "notifier": {
+        "zk_endpoints": ["localhost:2181"]
+    },
+    "is_primary": false
+}

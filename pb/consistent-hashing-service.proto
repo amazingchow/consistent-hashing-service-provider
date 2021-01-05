@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+option go_package = "github.com/amazingchow/photon-dance-consistent-hashing/api";
+package amazingchow.photon_dance_consistent_hashing;
+
+import "google/protobuf/timestamp.proto";
+
+message Node
+{
+	// base64 code of node ip or hostname or something like this.
+	string uuid = 1;
+	string extra_info = 2;
+	google.protobuf.Timestamp create_time = 3;
+	google.protobuf.Timestamp update_time = 4;
+}
+
+message Key
+{
+	string node_uuid = 1;
+	string name = 2;
+	google.protobuf.Timestamp create_time = 3;
+	google.protobuf.Timestamp update_time = 4;
+}
+
+/* ---------- request + response ---------- */
+message AddRequest
+{
+	Node node = 1;
+}
+
+message AddResponse {}
+
+message AddNRequest
+{
+	repeated Node nodes = 1;
+}
+
+message AddNResponse {}
+
+message DeleteRequest
+{
+	string uuid = 1;
+}
+
+message DeleteResponse {}
+
+message ListRequest {}
+
+message ListResponse
+{
+	repeated Node nodes = 1;
+}
+
+message MapKeyRequest
+{
+	Key key = 1;
+}
+
+message MapKeyResponse
+{
+	Key key = 1;
+}
+
+/* ---------- grpc gateway ---------- */
+service ConsistentHashingService
+{
+	rpc Add(AddRequest) returns (AddResponse);
+	rpc AddN(AddNRequest) returns (AddNResponse);
+	rpc Delete(DeleteRequest) returns (DeleteResponse);
+	rpc List(ListRequest) returns (ListResponse);
+	rpc MapKey(MapKeyRequest) returns (MapKeyResponse);
+}
