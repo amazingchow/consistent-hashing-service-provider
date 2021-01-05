@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+option go_package = "github.com/amazingchow/photon-dance-consistent-hashing/api";
+package amazingchow.photon_dance_consistent_hashing;
+
+import "google/protobuf/timestamp.proto";
+
+enum SenderType
+{
+	// used to record operation logs.
+	SENDER_TYPE_CLIENT = 0;
+	// used to replay operation logs.
+	SENDER_TYPE_OPLOG = 1;
+}
+
+message Shard
+{
+	// base64 code of machine ip or hostname.
+	string uuid = 1;
+	repeated Key keys = 2;
+}
+
+message Key
+{
+	string key = 1;
+	google.protobuf.Timestamp create_time = 2;
+	google.protobuf.Timestamp update_time = 3;
+}
+
+/* ---------- request + response ---------- */
+message AddShardRequest
+{
+	SenderType sender = 1;
+	bool to_record = 2;
+	bool to_replay = 3;
+	Shard shard = 4;
+}
+
+message AddShardResponse {}
+
+message AddShardsRequest
+{
+	SenderType sender = 1;
+	bool to_record = 2;
+	bool to_replay = 3;
+	repeated Shard shards = 4;
+}
+
+message AddShardsResponse {}
+
+message DeleteShardRequest
+{
+	SenderType sender = 1;
+	bool to_record = 2;
+	bool to_replay = 3;
+	string uuid = 4;
+}
+
+message DeleteShardResponse {}
+
+message ListShardsRequest {}
+
+message ListShardsResponse
+{
+	repeated Shard shards = 1;
+}
+
+message MapKeyRequest
+{
+	SenderType sender = 1;
+	bool to_record = 2;
+	bool to_replay = 3;
+	Key key = 4;
+}
+
+message MapKeyResponse
+{
+	Shard shard = 1;
+}
+
+/* ---------- grpc gateway ---------- */
+service ConsistentHashingService
+{
+	rpc AddShard(AddShardRequest) returns (AddShardResponse);
+	rpc AddShards(AddShardsRequest) returns (AddShardsResponse);
+	rpc DeleteShard(DeleteShardRequest) returns (DeleteShardResponse);
+	rpc ListShards(ListShardsRequest) returns (ListShardsResponse);
+	rpc MapKey(MapKeyRequest) returns (MapKeyResponse);
+}
