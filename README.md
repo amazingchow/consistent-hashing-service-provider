@@ -1,10 +1,57 @@
 # photon-dance-consistent-hashing
 
-**photon-dance-consistent-hashing** is designed to provide high-available and high-performance consistent-hashing service in distributed manner supported by replication + oplog.
+**photon-dance-consistent-hashing** is designed to provide consistent-hashing service in distributed manner supported by replication + oplog.
 
-![](doc/arch.jpeg)
+![](doc/arch.jpeg) 
 
-### Reference
+## Get Started
+
+### Prerequisites
+
+```text
+1. debian/ubuntu linux/x86-64 release
+2. go1.12.7 linux/amd64 or higher
+```
+
+### Installation
+
+#### Clone
+
+* Clone this repo to your local machine using https://github.com/amazingchow/photon-dance-consistent-hashing.git.
+
+#### Setup
+
+```shell
+# build the binary
+make build
+
+# start one master node
+./photon-dance-consistent-hashing --id="localhost:18081" --conf=conf/master.json --verbose=true
+
+# start two slave nodes
+./photon-dance-consistent-hashing --id="localhost:18082" --conf=conf/slave01.json --verbose=true
+./photon-dance-consistent-hashing --id="localhost:18083" --conf=conf/slave02.json --verbose=true
+
+# use grpcurl
+grpcurl -plaintext -d '{"node": {"uuid": "192.168.1.125"}}' localhost:18081 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/Add
+grpcurl -plaintext -d '{"node": {"uuid": "192.168.1.126"}}' localhost:18081 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/Add
+grpcurl -plaintext -d '{"node": {"uuid": "192.168.1.127"}}' localhost:18081 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/Add
+grpcurl -plaintext -d '{"node": {"uuid": "192.168.1.128"}}' localhost:18082 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/Add
+grpcurl -plaintext -d '{"node": {"uuid": "192.168.1.129"}}' localhost:18083 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/Add
+grpcurl -plaintext localhost:18081 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/List
+grpcurl -plaintext localhost:18082 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/List
+grpcurl -plaintext localhost:18083 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/List
+grpcurl -plaintext -d '{"uuid": "192.168.1.126"}' localhost:18082 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/Delete
+grpcurl -plaintext -d '{"uuid": "192.168.1.128"}' localhost:18083 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/Delete
+grpcurl -plaintext localhost:18081 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/List
+grpcurl -plaintext localhost:18082 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/List
+grpcurl -plaintext localhost:18083 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/List
+grpcurl -plaintext -d '{"key": {"name": "foo"}}' localhost:18082 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/MapKey
+grpcurl -plaintext -d '{"key": {"name": "bar"}}' localhost:18083 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/MapKey
+grpcurl -plaintext -d '{"key": {"name": "summychou"}}' localhost:18081 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/MapKey
+```
+
+## Reference
 
 * [Consistent Hashing, Danny Lewin, and the Creation of Akamai - MIT Prof. Tom Leighton](https://www.youtube.com/watch?v=apHAqUG3Pi8)
 * [Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web](https://www.akamai.com/us/en/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf)

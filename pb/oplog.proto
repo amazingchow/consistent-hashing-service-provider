@@ -7,9 +7,8 @@ import "google/protobuf/timestamp.proto";
 
 enum OperationType
 {
-	OPERATION_TYPE_ADD_SHARD = 0;
-	OPERATION_TYPE_REMOVE_SHARD = 1;
-	OPERATION_TYPE_MAP_KEY = 2;
+	OPERATION_TYPE_ADD = 0;
+	OPERATION_TYPE_REMOVE = 1;
 }
 
 message OpLogEntry
