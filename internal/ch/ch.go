@@ -7,11 +7,11 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	pb "github.com/amazingchow/photon-dance-consistent-hashing/api"
 	"github.com/amazingchow/photon-dance-consistent-hashing/internal/common"
 	conf "github.com/amazingchow/photon-dance-consistent-hashing/internal/config"
 	myerror "github.com/amazingchow/photon-dance-consistent-hashing/internal/error"
 	"github.com/amazingchow/photon-dance-consistent-hashing/internal/hashlib"
+	pb_api "github.com/amazingchow/photon-dance-consistent-hashing/pb/api"
 )
 
 // Executor implements consistent-hashing algorithm inspired by
@@ -24,9 +24,9 @@ type Executor struct {
 
 	isReady atomic.Value
 
-	hashspace map[uint32]string   // hash space, limited to 0~2^32-1
-	nodes     map[string]*pb.Node // check-table for node
-	nodesLoc  common.Uint32_n     // check-index for nodes
+	hashspace map[uint32]string       // hash space, limited to 0~2^32-1
+	nodes     map[string]*pb_api.Node // check-table for node
+	nodesLoc  common.Uint32_n         // check-index for nodes
 }
 
 func NewExecutor(wID string, cfg *conf.ConsistentHashing) *Executor {
@@ -35,7 +35,7 @@ func NewExecutor(wID string, cfg *conf.ConsistentHashing) *Executor {
 		cfg: cfg,
 
 		hashspace: make(map[uint32]string),
-		nodes:     make(map[string]*pb.Node),
+		nodes:     make(map[string]*pb_api.Node),
 		nodesLoc:  make(common.Uint32_n, 0),
 	}
 }
@@ -52,7 +52,7 @@ func (ch *Executor) IsReady() bool {
 	return ch.isReady.Load().(int) == 1
 }
 
-func (ch *Executor) Join(node *pb.Node) error {
+func (ch *Executor) Join(node *pb_api.Node) error {
 	if !ch.IsReady() {
 		return myerror.ErrNotReadyWorker
 	}
@@ -69,7 +69,7 @@ func (ch *Executor) Join(node *pb.Node) error {
 	return myerror.NewNodeExistsError(node.GetUuid())
 }
 
-func (ch *Executor) join(node *pb.Node) {
+func (ch *Executor) join(node *pb_api.Node) {
 	/*
 		assume that uuid is "a.b.c.d", then N+1 nodes will be added.
 
@@ -127,7 +127,7 @@ func (ch *Executor) updateLoc() {
 	ch.nodesLoc = loc
 }
 
-func (ch *Executor) List() ([]*pb.Node, error) {
+func (ch *Executor) List() ([]*pb_api.Node, error) {
 	if !ch.IsReady() {
 		return nil, myerror.ErrNotReadyWorker
 	}
@@ -135,7 +135,7 @@ func (ch *Executor) List() ([]*pb.Node, error) {
 	ch.mu.RLock()
 	defer ch.mu.RUnlock()
 
-	nodes := make([]*pb.Node, 0, len(ch.nodes))
+	nodes := make([]*pb_api.Node, 0, len(ch.nodes))
 	for _, v := range ch.nodes {
 		nodes = append(nodes, v)
 	}

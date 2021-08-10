@@ -17,6 +17,9 @@ ifeq ($(debug), 1)
 	BUILD_FLAGS += -gcflags=all="-N -l"
 endif
 
+compile_pb:
+	@docker run --rm -v `pwd`:/defs namely/protoc-all:1.37_0 -o pb -d pb -l go
+
 all: build
 
 build: $(ALL_TARGETS)

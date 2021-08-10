@@ -7,7 +7,6 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 
-	pb "github.com/amazingchow/photon-dance-consistent-hashing/api"
 	consistenthashing "github.com/amazingchow/photon-dance-consistent-hashing/internal/ch"
 	"github.com/amazingchow/photon-dance-consistent-hashing/internal/common"
 	conf "github.com/amazingchow/photon-dance-consistent-hashing/internal/config"
@@ -15,6 +14,7 @@ import (
 	"github.com/amazingchow/photon-dance-consistent-hashing/internal/notifier"
 	"github.com/amazingchow/photon-dance-consistent-hashing/internal/oplog"
 	"github.com/amazingchow/photon-dance-consistent-hashing/internal/service"
+	pb_api "github.com/amazingchow/photon-dance-consistent-hashing/pb/api"
 )
 
 type consistentHashingServiceServer struct {
@@ -62,14 +62,14 @@ func (srv *consistentHashingServiceServer) close() {
 	srv.forwarder.Close()
 }
 
-func (srv *consistentHashingServiceServer) Add(ctx context.Context, req *pb.AddRequest) (*pb.AddResponse, error) {
+func (srv *consistentHashingServiceServer) Add(ctx context.Context, req *pb_api.AddRequest) (*pb_api.AddResponse, error) {
 	if req.GetNode().GetUuid() == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "empty shard uuid")
 	}
 
 	var err error
 	if !srv.isLeader {
-		var cli pb.ConsistentHashingServiceClient
+		var cli pb_api.ConsistentHashingServiceClient
 		if cli, err = srv.forwardToLeader(); err == nil && cli != nil {
 			tctx, cancel := context.WithTimeout(ctx, common.ForwardTimeout)
 			defer cancel()
@@ -86,18 +86,18 @@ func (srv *consistentHashingServiceServer) Add(ctx context.Context, req *pb.AddR
 		// Leader节点添加OpLog
 		if srv.oplogger != nil {
 			bytes, _ := proto.Marshal(req.GetNode())
-			srv.oplogger.SyncAddOpLog(&pb.OpLogEntry{
-				OperationType: pb.OperationType_OPERATION_TYPE_ADD,
+			srv.oplogger.SyncAddOpLog(&pb_api.OpLogEntry{
+				OperationType: pb_api.OperationType_OPERATION_TYPE_ADD,
 				Payload:       bytes,
 			})
 		}
-		return &pb.AddResponse{}, nil
+		return &pb_api.AddResponse{}, nil
 	}
 	err = convertError(ctx, err)
 	return nil, err
 }
 
-func (srv *consistentHashingServiceServer) AddN(ctx context.Context, req *pb.AddNRequest) (*pb.AddNResponse, error) {
+func (srv *consistentHashingServiceServer) AddN(ctx context.Context, req *pb_api.AddNRequest) (*pb_api.AddNResponse, error) {
 	if len(req.GetNodes()) == 0 {
 		return nil, status.Errorf(codes.InvalidArgument, "no shard")
 	}
@@ -109,7 +109,7 @@ func (srv *consistentHashingServiceServer) AddN(ctx context.Context, req *pb.Add
 
 	var err error
 	if !srv.isLeader {
-		var cli pb.ConsistentHashingServiceClient
+		var cli pb_api.ConsistentHashingServiceClient
 		if cli, err = srv.forwardToLeader(); err == nil && cli != nil {
 			tctx, cancel := context.WithTimeout(ctx, common.ForwardTimeout)
 			defer cancel()
@@ -126,8 +126,8 @@ func (srv *consistentHashingServiceServer) AddN(ctx context.Context, req *pb.Add
 			// Leader节点添加OpLog
 			if srv.oplogger != nil {
 				bytes, _ := proto.Marshal(req.GetNodes()[i])
-				srv.oplogger.SyncAddOpLog(&pb.OpLogEntry{
-					OperationType: pb.OperationType_OPERATION_TYPE_ADD,
+				srv.oplogger.SyncAddOpLog(&pb_api.OpLogEntry{
+					OperationType: pb_api.OperationType_OPERATION_TYPE_ADD,
 					Payload:       bytes,
 				})
 			}
@@ -137,17 +137,17 @@ func (srv *consistentHashingServiceServer) AddN(ctx context.Context, req *pb.Add
 	if err != nil {
 		return nil, err
 	}
-	return &pb.AddNResponse{}, nil
+	return &pb_api.AddNResponse{}, nil
 }
 
-func (srv *consistentHashingServiceServer) Delete(ctx context.Context, req *pb.DeleteRequest) (*pb.DeleteResponse, error) {
+func (srv *consistentHashingServiceServer) Delete(ctx context.Context, req *pb_api.DeleteRequest) (*pb_api.DeleteResponse, error) {
 	if req.GetUuid() == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "empty shard uuid")
 	}
 
 	var err error
 	if !srv.isLeader {
-		var cli pb.ConsistentHashingServiceClient
+		var cli pb_api.ConsistentHashingServiceClient
 		if cli, err = srv.forwardToLeader(); err == nil && cli != nil {
 			tctx, cancel := context.WithTimeout(ctx, common.ForwardTimeout)
 			defer cancel()
@@ -163,30 +163,30 @@ func (srv *consistentHashingServiceServer) Delete(ctx context.Context, req *pb.D
 	if err == nil {
 		// Leader节点添加OpLog
 		if srv.oplogger != nil {
-			srv.oplogger.SyncAddOpLog(&pb.OpLogEntry{
-				OperationType: pb.OperationType_OPERATION_TYPE_REMOVE,
+			srv.oplogger.SyncAddOpLog(&pb_api.OpLogEntry{
+				OperationType: pb_api.OperationType_OPERATION_TYPE_REMOVE,
 				Payload:       []byte(req.GetUuid()),
 			})
 		}
-		return &pb.DeleteResponse{}, nil
+		return &pb_api.DeleteResponse{}, nil
 	}
 	err = convertError(ctx, err)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.DeleteResponse{}, nil
+	return &pb_api.DeleteResponse{}, nil
 }
 
-func (srv *consistentHashingServiceServer) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
+func (srv *consistentHashingServiceServer) List(ctx context.Context, req *pb_api.ListRequest) (*pb_api.ListResponse, error) {
 	nodes, err := srv.executor.List()
 	err = convertError(ctx, err)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.ListResponse{Nodes: nodes}, nil
+	return &pb_api.ListResponse{Nodes: nodes}, nil
 }
 
-func (srv *consistentHashingServiceServer) MapKey(ctx context.Context, req *pb.MapKeyRequest) (*pb.MapKeyResponse, error) {
+func (srv *consistentHashingServiceServer) MapKey(ctx context.Context, req *pb_api.MapKeyRequest) (*pb_api.MapKeyResponse, error) {
 	if req.GetKey().GetName() == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "empty key")
 	}
@@ -196,16 +196,16 @@ func (srv *consistentHashingServiceServer) MapKey(ctx context.Context, req *pb.M
 	if err != nil {
 		return nil, err
 	}
-	return &pb.MapKeyResponse{Key: &pb.Key{NodeUuid: uuid}}, nil
+	return &pb_api.MapKeyResponse{Key: &pb_api.Key{NodeUuid: uuid}}, nil
 }
 
-func (srv *consistentHashingServiceServer) forwardToLeader() (pb.ConsistentHashingServiceClient, error) {
+func (srv *consistentHashingServiceServer) forwardToLeader() (pb_api.ConsistentHashingServiceClient, error) {
 	leader := srv.notifier.GetLeader()
 	conn, err := srv.forwarder.Connect(leader)
 	if err != nil {
 		return nil, myerror.ErrNoAvailableLeader
 	}
-	return pb.NewConsistentHashingServiceClient(conn), nil
+	return pb_api.NewConsistentHashingServiceClient(conn), nil
 }
 
 func convertError(ctx context.Context, err error) error {
