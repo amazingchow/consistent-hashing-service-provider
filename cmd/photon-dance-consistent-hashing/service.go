@@ -10,8 +10,8 @@ import (
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/reflection"
 
-	pb "github.com/amazingchow/photon-dance-consistent-hashing/api"
 	conf "github.com/amazingchow/photon-dance-consistent-hashing/internal/config"
+	pb_api "github.com/amazingchow/photon-dance-consistent-hashing/pb/api"
 )
 
 func serveGPRC(ctx context.Context, srv *consistentHashingServiceServer, cfg *conf.Node) {
@@ -33,7 +33,7 @@ func serveGPRC(ctx context.Context, srv *consistentHashingServiceServer, cfg *co
 		}),
 	}
 	grpcServer := grpc.NewServer(opts...)
-	pb.RegisterConsistentHashingServiceServer(grpcServer, srv)
+	pb_api.RegisterConsistentHashingServiceServer(grpcServer, srv)
 	// Register reflection service on gRPC server.
 	reflection.Register(grpcServer)
 

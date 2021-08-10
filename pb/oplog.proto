@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/amazingchow/photon-dance-consistent-hashing/api";
+option go_package = "./api";
 package amazingchow.photon_dance_consistent_hashing;
 
 import "google/protobuf/timestamp.proto";

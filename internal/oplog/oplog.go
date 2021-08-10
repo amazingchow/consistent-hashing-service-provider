@@ -11,13 +11,13 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/amazingchow/photon-dance-consistent-hashing/api"
 	consistenthashing "github.com/amazingchow/photon-dance-consistent-hashing/internal/ch"
+	pb_api "github.com/amazingchow/photon-dance-consistent-hashing/pb/api"
 )
 
 type OpLogger struct {
 	ctx    context.Context
-	oplogs chan *api.OpLogEntry
+	oplogs chan *pb_api.OpLogEntry
 	topic  string
 
 	consumerGroup sarama.ConsumerGroup
@@ -32,7 +32,7 @@ type OpLogger struct {
 func NewOpLogger(ctx context.Context, topic string, executor *consistenthashing.Executor) *OpLogger {
 	oplogger := OpLogger{
 		ctx:      ctx,
-		oplogs:   make(chan *api.OpLogEntry, 4096),
+		oplogs:   make(chan *pb_api.OpLogEntry, 4096),
 		topic:    topic,
 		overfeed: 0,
 		executor: executor,
@@ -104,18 +104,18 @@ CONSUME_LOOP:
 }
 
 func (olr *OpLogger) cfunc(data []byte, topic string) error {
-	var oplog = new(api.OpLogEntry)
+	var oplog = new(pb_api.OpLogEntry)
 	proto.Unmarshal(data, oplog) // nolint
 
 	switch oplog.GetOperationType() {
-	case api.OperationType_OPERATION_TYPE_ADD:
+	case pb_api.OperationType_OPERATION_TYPE_ADD:
 		{
 			log.Debug().Msg("consume oplog OPERATION_TYPE_ADD_SHARD")
-			var node = new(api.Node)
+			var node = new(pb_api.Node)
 			proto.Unmarshal(oplog.GetPayload(), node) // nolint
 			olr.executor.Join(node)                   // nolint
 		}
-	case api.OperationType_OPERATION_TYPE_REMOVE:
+	case pb_api.OperationType_OPERATION_TYPE_REMOVE:
 		{
 			log.Debug().Msg("consume oplog OPERATION_TYPE_REMOVE_SHARD")
 			olr.executor.Leave(string(oplog.GetPayload())) // nolint
@@ -215,23 +215,23 @@ PRODUCE_LOOP:
 	}
 }
 
-func (olr *OpLogger) pfunc(msgChan chan<- *sarama.ProducerMessage, oplog *api.OpLogEntry, topic string) error {
+func (olr *OpLogger) pfunc(msgChan chan<- *sarama.ProducerMessage, oplog *pb_api.OpLogEntry, topic string) error {
 	bytes, _ := proto.Marshal(oplog)
 	switch oplog.GetOperationType() {
-	case api.OperationType_OPERATION_TYPE_ADD:
+	case pb_api.OperationType_OPERATION_TYPE_ADD:
 		{
 			msgChan <- &sarama.ProducerMessage{
 				Topic: topic,
-				Key:   sarama.StringEncoder(strconv.Itoa(int(api.OperationType_OPERATION_TYPE_ADD))),
+				Key:   sarama.StringEncoder(strconv.Itoa(int(pb_api.OperationType_OPERATION_TYPE_ADD))),
 				Value: sarama.ByteEncoder(bytes),
 			}
 			log.Debug().Msg("produce oplog OPERATION_TYPE_ADD_SHARD")
 		}
-	case api.OperationType_OPERATION_TYPE_REMOVE:
+	case pb_api.OperationType_OPERATION_TYPE_REMOVE:
 		{
 			msgChan <- &sarama.ProducerMessage{
 				Topic: topic,
-				Key:   sarama.StringEncoder(strconv.Itoa(int(api.OperationType_OPERATION_TYPE_REMOVE))),
+				Key:   sarama.StringEncoder(strconv.Itoa(int(pb_api.OperationType_OPERATION_TYPE_REMOVE))),
 				Value: sarama.ByteEncoder(bytes),
 			}
 			log.Debug().Msg("produce oplog OPERATION_TYPE_REMOVE_SHARD")
@@ -244,7 +244,7 @@ func (olr *OpLogger) pfunc(msgChan chan<- *sarama.ProducerMessage, oplog *api.Op
 	return nil
 }
 
-func (olr *OpLogger) SyncAddOpLog(oplog *api.OpLogEntry) {
+func (olr *OpLogger) SyncAddOpLog(oplog *pb_api.OpLogEntry) {
 	select {
 	case olr.oplogs <- oplog:
 	default:
