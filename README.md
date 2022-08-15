@@ -1,6 +1,6 @@
-# photon-dance-consistent-hashing
+# consistent-hashing-service-provider
 
-**photon-dance-consistent-hashing** is designed to provide consistent-hashing service in distributed manner supported by replication + oplog.
+**consistent-hashing-service-provider** is designed to provide consistent-hashing service in distributed manner supported by replication + oplog.
 
 ![](doc/arch.jpeg) 
 
@@ -10,14 +10,14 @@
 
 ```text
 1. debian/ubuntu linux/x86-64 release
-2. go1.12.7 linux/amd64 or higher
+2. go1.18+ linux/amd64 or higher
 ```
 
 ### Installation
 
 #### Clone
 
-* Clone this repo to your local machine using https://github.com/amazingchow/photon-dance-consistent-hashing.git.
+* Clone this repo to your local machine using https://github.com/amazingchow/consistent-hashing-service-provider.git.
 
 #### Setup
 
@@ -26,11 +26,11 @@
 make build
 
 # start one master node
-./photon-dance-consistent-hashing --id="localhost:18081" --conf=conf/master.json --verbose=true
+./consistent-hashing-service-provider --id="localhost:18081" --conf=conf/master.json --verbose=true
 
 # start two slave nodes
-./photon-dance-consistent-hashing --id="localhost:18082" --conf=conf/slave01.json --verbose=true
-./photon-dance-consistent-hashing --id="localhost:18083" --conf=conf/slave02.json --verbose=true
+./consistent-hashing-service-provider --id="localhost:18082" --conf=conf/slave01.json --verbose=true
+./consistent-hashing-service-provider --id="localhost:18083" --conf=conf/slave02.json --verbose=true
 
 # use grpcurl
 grpcurl -plaintext -d '{"node": {"uuid": "192.168.1.125"}}' localhost:18081 amazingchow.photon_dance_consistent_hashing.ConsistentHashingService/Add
@@ -53,7 +53,6 @@ grpcurl -plaintext -d '{"key": {"name": "summychou"}}' localhost:18081 amazingch
 
 ## Reference
 
-* [Consistent Hashing, Danny Lewin, and the Creation of Akamai - MIT Prof. Tom Leighton](https://www.youtube.com/watch?v=apHAqUG3Pi8)
 * [Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web](https://www.akamai.com/us/en/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf)
 * [Consistent Hashing with Bounded Loads](https://arxiv.org/pdf/1608.01350.pdf)
 * [A Fast, Minimal Memory, Consistent Hash Algorithm](https://arxiv.org/pdf/1406.2294.pdf)
@@ -70,7 +69,7 @@ grpcurl -plaintext -d '{"key": {"name": "summychou"}}' localhost:18081 amazingch
 
 ### Step 3
 
-* 🔃 Create a new PR using https://github.com/amazingchow/photon-dance-consistent-hashing/compare!
+* 🔃 Create a new PR using https://github.com/amazingchow/consistent-hashing-service-provider/compare!
 
 ## Support
 

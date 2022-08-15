@@ -1,7 +1,7 @@
 VERSION     := v1.0.0
-PROJECT     := github.com/amazingchow/photon-dance-consistent-hashing
+PROJECT     := github.com/amazingchow/consistent-hashing-service-provider
 SRC         := $(shell find . -type f -name '*.go' -not -path "./vendor/*")
-TARGETS     := photon-dance-consistent-hashing
+TARGETS     := consistent-hashing-service-provider
 ALL_TARGETS := $(TARGETS)
 
 LDFLAGS += -X "$(PROJECT)/internal/version.Version=$(VERSION)"
@@ -25,11 +25,7 @@ all: build
 build: $(ALL_TARGETS)
 
 $(TARGETS): $(SRC)
-ifeq ("$(GOMODULEPATH)", "")
-	@echo "no GOMODULEPATH env provided!!!"
-	@exit 1
-endif
-	go build $(BUILD_FLAGS) -ldflags '$(LDFLAGS)' $(GOMODULEPATH)/$(PROJECT)/cmd/$@
+	go build $(BUILD_FLAGS) -ldflags '$(LDFLAGS)' $(PWD)/cmd/$@
 
 lint:
 	@golangci-lint run --skip-dirs=api --deadline=5m

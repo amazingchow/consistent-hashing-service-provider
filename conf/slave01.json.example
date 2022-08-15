@@ -5,9 +5,9 @@
     },
     "oplogger": {
         "enable": true,
-        "kafka_topic": "photon-dance-consistent-hashing-oplog",
+        "kafka_topic": "consistent-hashing-service-provider-oplog",
         "kafka_brokers": ["localhost:9092"],
-        "kafka_consumer_group": "photon-dance-consistent-hashing-consumer-group-01"
+        "kafka_consumer_group": "consistent-hashing-service-provider-consumer-group-01"
     },
     "notifier": {
         "zk_endpoints": ["localhost:2181"]

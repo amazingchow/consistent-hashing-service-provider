@@ -6,7 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 
-	myerror "github.com/amazingchow/photon-dance-consistent-hashing/internal/error"
+	myerror "github.com/amazingchow/consistent-hashing-service-provider/internal/error"
 )
 
 // Forwarder forwards the incoming traffic to next opened grpc connection

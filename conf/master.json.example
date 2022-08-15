@@ -5,7 +5,7 @@
     },
     "oplogger": {
         "enable": true,
-        "kafka_topic": "photon-dance-consistent-hashing-oplog",
+        "kafka_topic": "consistent-hashing-service-provider-oplog",
         "kafka_brokers": ["localhost:9092"]
     },
     "notifier": {

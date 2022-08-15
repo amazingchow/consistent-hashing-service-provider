@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	conf "github.com/amazingchow/photon-dance-consistent-hashing/internal/config"
+	conf "github.com/amazingchow/consistent-hashing-service-provider/internal/config"
 )
 
 func TestExecutor(t *testing.T) {
