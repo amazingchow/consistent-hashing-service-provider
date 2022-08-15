@@ -13,8 +13,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	conf "github.com/amazingchow/photon-dance-consistent-hashing/internal/config"
-	"github.com/amazingchow/photon-dance-consistent-hashing/internal/util"
+	conf "github.com/amazingchow/consistent-hashing-service-provider/internal/config"
+	"github.com/amazingchow/consistent-hashing-service-provider/internal/util"
 )
 
 var (

@@ -4,8 +4,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/samuel/go-zookeeper/zk"
 
-	"github.com/amazingchow/photon-dance-consistent-hashing/internal/common"
-	conf "github.com/amazingchow/photon-dance-consistent-hashing/internal/config"
+	"github.com/amazingchow/consistent-hashing-service-provider/internal/common"
+	conf "github.com/amazingchow/consistent-hashing-service-provider/internal/config"
 )
 
 type Notifier struct {

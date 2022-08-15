@@ -3,7 +3,7 @@ package consistenthashing
 import (
 	"fmt"
 
-	"github.com/amazingchow/photon-dance-consistent-hashing/internal/hashlib"
+	"github.com/amazingchow/consistent-hashing-service-provider/internal/hashlib"
 )
 
 func genLoc(uuid string, idx int) uint32 {

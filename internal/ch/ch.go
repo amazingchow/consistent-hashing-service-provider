@@ -7,11 +7,11 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/amazingchow/photon-dance-consistent-hashing/internal/common"
-	conf "github.com/amazingchow/photon-dance-consistent-hashing/internal/config"
-	myerror "github.com/amazingchow/photon-dance-consistent-hashing/internal/error"
-	"github.com/amazingchow/photon-dance-consistent-hashing/internal/hashlib"
-	pb_api "github.com/amazingchow/photon-dance-consistent-hashing/pb/api"
+	"github.com/amazingchow/consistent-hashing-service-provider/internal/common"
+	conf "github.com/amazingchow/consistent-hashing-service-provider/internal/config"
+	myerror "github.com/amazingchow/consistent-hashing-service-provider/internal/error"
+	"github.com/amazingchow/consistent-hashing-service-provider/internal/hashlib"
+	pb_api "github.com/amazingchow/consistent-hashing-service-provider/pb/api"
 )
 
 // Executor implements consistent-hashing algorithm inspired by

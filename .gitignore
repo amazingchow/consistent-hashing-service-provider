@@ -14,5 +14,7 @@
 # Dependency directories (remove the comment below to include it)
 vendor/
 
-/photon-dance-consistent-hashing
+.vscode
+
+/consistent-hashing-service-provider
 /conf/*.json

@@ -7,14 +7,14 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 
-	consistenthashing "github.com/amazingchow/photon-dance-consistent-hashing/internal/ch"
-	"github.com/amazingchow/photon-dance-consistent-hashing/internal/common"
-	conf "github.com/amazingchow/photon-dance-consistent-hashing/internal/config"
-	myerror "github.com/amazingchow/photon-dance-consistent-hashing/internal/error"
-	"github.com/amazingchow/photon-dance-consistent-hashing/internal/notifier"
-	"github.com/amazingchow/photon-dance-consistent-hashing/internal/oplog"
-	"github.com/amazingchow/photon-dance-consistent-hashing/internal/service"
-	pb_api "github.com/amazingchow/photon-dance-consistent-hashing/pb/api"
+	consistenthashing "github.com/amazingchow/consistent-hashing-service-provider/internal/ch"
+	"github.com/amazingchow/consistent-hashing-service-provider/internal/common"
+	conf "github.com/amazingchow/consistent-hashing-service-provider/internal/config"
+	myerror "github.com/amazingchow/consistent-hashing-service-provider/internal/error"
+	"github.com/amazingchow/consistent-hashing-service-provider/internal/notifier"
+	"github.com/amazingchow/consistent-hashing-service-provider/internal/oplog"
+	"github.com/amazingchow/consistent-hashing-service-provider/internal/service"
+	pb_api "github.com/amazingchow/consistent-hashing-service-provider/pb/api"
 )
 
 type consistentHashingServiceServer struct {

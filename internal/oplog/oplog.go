@@ -11,8 +11,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/proto"
 
-	consistenthashing "github.com/amazingchow/photon-dance-consistent-hashing/internal/ch"
-	pb_api "github.com/amazingchow/photon-dance-consistent-hashing/pb/api"
+	consistenthashing "github.com/amazingchow/consistent-hashing-service-provider/internal/ch"
+	pb_api "github.com/amazingchow/consistent-hashing-service-provider/pb/api"
 )
 
 type OpLogger struct {
